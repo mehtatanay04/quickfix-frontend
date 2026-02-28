@@ -22,7 +22,6 @@ function Login(){
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", response.data.role);
         navigate("/dashboard");
-        alert("Login successful");
         
     } catch (error){
         localStorage.removeItem("token");
