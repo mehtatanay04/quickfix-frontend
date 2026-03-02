@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import UserDashboard from "./UserDashboard";
+import AdminDashboard from "./AdminDashboard";
 
 function Dashboard() {
 
@@ -18,7 +19,7 @@ function Dashboard() {
         <div style={{ padding: "20px" }}>
             <h1>Dashboard</h1>
 
-            {role === "ADMIN" && <h2>Welcome Admin Panel</h2>}
+            {role === "ADMIN" && <AdminDashboard/>}
             {role === "USER" && <UserDashboard/>}
 
             <button
