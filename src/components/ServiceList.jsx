@@ -39,9 +39,7 @@ function ServiceList({ onBooked }) {
                 }
             );
 
-            alert("Service booked successfully");
-
-            onBooked(); // refresh bookings
+            onBooked();
 
         } catch (error) {
             alert("Booking failed");
@@ -49,27 +47,39 @@ function ServiceList({ onBooked }) {
     };
 
     return (
-        <div>
-            <h2>Available Services</h2>
+        <div className="services-section">
 
-            {services.map(service => (
-                <div
-                    key={service.id}
-                    style={{
-                        border: "1px solid gray",
-                        padding: "10px",
-                        marginBottom: "10px"
-                    }}
-                >
-                    <h3>{service.name}</h3>
-                    <p>{service.description}</p>
-                    <p>₹ {service.price}</p>
+            <h2 className="section-title">Available Services</h2>
 
-                    <button onClick={() => bookService(service.id)}>
-                        Book
-                    </button>
-                </div>
-            ))}
+            <div className="services-grid">
+
+                {services.map(service => (
+                    <div key={service.id} className="service-card">
+
+                        <h3 className="service-title">
+                            {service.name}
+                        </h3>
+
+                        <p className="service-description">
+                            {service.description}
+                        </p>
+
+                        <p className="service-price">
+                            ₹ {service.price}
+                        </p>
+
+                        <button
+                            className="primary-btn"
+                            onClick={() => bookService(service.id)}
+                        >
+                            Book Service
+                        </button>
+
+                    </div>
+                ))}
+
+            </div>
+
         </div>
     );
 }

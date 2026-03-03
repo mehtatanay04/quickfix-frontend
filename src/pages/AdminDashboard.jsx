@@ -39,9 +39,7 @@ function AdminDashboard() {
                 }
             );
 
-            alert("Status updated");
-
-            fetchAllBookings(); // refresh data
+            fetchAllBookings();
 
         } catch (error) {
             alert("Failed to update status");
@@ -49,34 +47,43 @@ function AdminDashboard() {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2>All Bookings (Admin)</h2>
+        <div className="dashboard-container">
+
+            <h2 className="section-title">All Bookings (Admin)</h2>
+
+            {bookings.length === 0 && (
+                <p className="empty-message">No bookings found</p>
+            )}
 
             {bookings.map(booking => (
-                <div
-                    key={booking.id}
-                    style={{
-                        border: "1px solid gray",
-                        padding: "10px",
-                        marginBottom: "10px"
-                    }}
-                >
-                    <p><strong>User:</strong> {booking.user.email}</p>
-                    <p><strong>Service:</strong> {booking.service.name}</p>
-                    <p><strong>Current Status:</strong> {booking.status}</p>
+                <div key={booking.id} className="card">
 
-                    <select
-                        value={booking.status}
-                        onChange={(e) =>
-                            updateStatus(booking.id, e.target.value)
-                        }
-                    >
-                        <option value="PENDING">PENDING</option>
-                        <option value="CONFIRMED">CONFIRMED</option>
-                        <option value="COMPLETED">COMPLETED</option>
-                    </select>
+                    <div className="card-content">
+                        <p><strong>User:</strong> {booking.user.email}</p>
+                        <p><strong>Service:</strong> {booking.service.name}</p>
+
+                        <p className={`status-badge status-${booking.status.toLowerCase()}`}>
+                            {booking.status}
+                        </p>
+                    </div>
+
+                    <div className="card-actions">
+                        <select
+                            className="status-select"
+                            value={booking.status}
+                            onChange={(e) =>
+                                updateStatus(booking.id, e.target.value)
+                            }
+                        >
+                            <option value="PENDING">PENDING</option>
+                            <option value="CONFIRMED">CONFIRMED</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                        </select>
+                    </div>
+
                 </div>
             ))}
+
         </div>
     );
 }

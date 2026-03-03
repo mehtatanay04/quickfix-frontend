@@ -2,36 +2,75 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Register(){
-  const navigate = useNavigate();
+function Register() {
 
-  const [name, setName] = useState("");
-  const[email, setEmail] = useState("");
-  const[password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-  const handleRegister = async(e) => {
-    e.preventDefault();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    try {
-      await axios.post ("http://localhost:8081/api/auth/register", {name, email,password});
-      alert("Registration Succesful !");
-      navigate("/");
-    } catch (error) {
-      alert("Registration failed");
-    }
-  };
+    const handleRegister = async (e) => {
+        e.preventDefault();
 
-  return (
-    <div className="auth-container">
-      <h2>Register</h2>
-      <form onSubmit={handleRegister}>
-        <input type="text" placeholder="Name" value={name} onChange={(e) => setName (e.target.value)} />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" value={password} onChange={e.target.value} />
-        <button type="submit">Register</button>
-      </form>
-    </div>
-  );
+        try {
+            await axios.post(
+                "http://localhost:8081/api/auth/register",
+                { name, email, password }
+            );
+
+            alert("Registration Successful!");
+            navigate("/");
+
+        } catch (error) {
+            alert("Registration failed");
+        }
+    };
+
+    return (
+        <div className="auth-page">
+            <div className="auth-card">
+
+                <h2 className="auth-title">Create Account</h2>
+
+                <form className="auth-form" onSubmit={handleRegister}>
+
+                    <input
+                        className="auth-input"
+                        type="text"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                    />
+
+                    <input
+                        className="auth-input"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+
+                    <input
+                        className="auth-input"
+                        type="password"
+                        placeholder="Create password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+
+                    <button className="auth-button" type="submit">
+                        Register
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    );
 }
 
 export default Register;

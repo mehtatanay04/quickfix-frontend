@@ -29,28 +29,34 @@ function UserDashboard() {
     };
 
     return (
-        <div style={{ padding: "20px" }}>
-            <ServiceList onBooked={fetchMyBookings} />
+        <div className="dashboard-container">
 
-            <hr />
+            <div className="services-section">
+                <ServiceList onBooked={fetchMyBookings} />
+            </div>
 
-            <h2>My Bookings</h2>
+            <div className="bookings-section">
+                <h2 className="section-title">My Bookings</h2>
 
-            {bookings.length === 0 && <p>No bookings yet</p>}
+                {bookings.length === 0 && (
+                    <p className="empty-message">No bookings yet</p>
+                )}
 
-            {bookings.map(booking => (
-                <div
-                    key={booking.id}
-                    style={{
-                        border: "1px solid gray",
-                        padding: "10px",
-                        marginBottom: "10px"
-                    }}
-                >
-                    <h3>{booking.service.name}</h3>
-                    <p>Status: {booking.status}</p>
-                </div>
-            ))}
+                {bookings.map(booking => (
+                    <div key={booking.id} className="card">
+
+                        <h3 className="card-title">
+                            {booking.service.name}
+                        </h3>
+
+                        <p className={`status-badge status-${booking.status.toLowerCase()}`}>
+                            {booking.status}
+                        </p>
+
+                    </div>
+                ))}
+            </div>
+
         </div>
     );
 }

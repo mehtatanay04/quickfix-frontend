@@ -1,34 +1,22 @@
-import { useNavigate } from "react-router-dom";
 import UserDashboard from "./UserDashboard";
 import AdminDashboard from "./AdminDashboard";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
 
-    const navigate = useNavigate();
     const role = localStorage.getItem("role");
 
-    const handleLogout = () => {
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("role");
-
-        navigate("/");
-    };
-
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Dashboard</h1>
+        <>
+            <Navbar />
 
-            {role === "ADMIN" && <AdminDashboard/>}
-            {role === "USER" && <UserDashboard/>}
+            <div className="dashboard-container">
 
-            <button
-                onClick={handleLogout}
-                style={{ marginTop: "20px" }}
-            >
-                Logout
-            </button>
-        </div>
+                {role === "ADMIN" && <AdminDashboard />}
+                {role === "USER" && <UserDashboard />}
+
+            </div>
+        </>
     );
 }
 
