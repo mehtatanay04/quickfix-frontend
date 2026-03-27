@@ -4,61 +4,100 @@ import ServiceList from "../components/ServiceList";
 
 function UserDashboard() {
 
-    const [bookings, setBookings] = useState([]);
+const [bookings, setBookings] = useState([]);
 
-    useEffect(() => {
-        fetchMyBookings();
-    }, []);
+useEffect(() => {
+fetchMyBookings();
+}, []);
 
-    const fetchMyBookings = async () => {
-        try {
-            const response = await axios.get(
-                "http://localhost:8081/api/user/my-bookings",
-                {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token")
-                    }
-                }
-            );
+const fetchMyBookings = async () => {
+try {
+const response = await axios.get(
+"http://localhost:8081/api/user/my-bookings",
+{
+headers: {
+Authorization: "Bearer " + localStorage.getItem("token")
+}
+}
+);
 
-            setBookings(response.data);
+setBookings(response.data);
 
-        } catch (error) {
-            alert("Failed to load bookings");
-        }
-    };
+} catch (error) {
+alert("Failed to load bookings");
+}
+};
 
-    return (
-        <div className="dashboard-container">
+const cancelBooking = async (bookingId) => {
+try {
+await axios.put(
+`http://localhost:8081/api/user/cancel/${bookingId}`,
+{},
+{
+headers: {
+Authorization: "Bearer " + localStorage.getItem("token")
+}
+}
+);
 
-            <div className="services-section">
-                <ServiceList onBooked={fetchMyBookings} />
-            </div>
+alert("Booking cancelled");
+fetchMyBookings();
 
-            <div className="bookings-section">
-                <h2 className="section-title">My Bookings</h2>
+} catch (error) {
+alert(error.response?.data?.message || "Cancel failed");
+}
+};
 
-                {bookings.length === 0 && (
-                    <p className="empty-message">No bookings yet</p>
-                )}
+return (
+<div className="dashboard-container">
 
-                {bookings.map(booking => (
-                    <div key={booking.id} className="card">
+{/* SERVICES */}
+<ServiceList onBooked={fetchMyBookings} />
 
-                        <h3 className="card-title">
-                            {booking.service.name}
-                        </h3>
+{/* BOOKINGS */}
+<h2 className="section-title">My Bookings</h2>
 
-                        <p className={`status-badge status-${booking.status.toLowerCase()}`}>
-                            {booking.status}
-                        </p>
+{bookings.length === 0 && (
+<p className="empty-message">No bookings yet</p>
+)}
 
-                    </div>
-                ))}
-            </div>
+{bookings.map(booking => (
+<div key={booking.id} className="card">
 
-        </div>
-    );
+<div className="card-content">
+
+<h3 className="card-title">
+{booking.service.name}
+</h3>
+
+<p><strong>Date:</strong> {booking.bookingDate}</p>
+<p><strong>Slot:</strong> {booking.timeSlot}</p>
+<p><strong>Address:</strong> {booking.address}</p>
+
+<span className={`status-badge status-${booking.status.toLowerCase()}`}>
+{booking.status}
+</span>
+
+</div>
+
+<div className="card-actions">
+
+{booking.status === "PENDING" && (
+<button
+className="logout-btn"
+onClick={() => cancelBooking(booking.id)}
+>
+Cancel
+</button>
+)}
+
+</div>
+
+</div>
+))}
+
+</div>
+);
 }
 
 export default UserDashboard;

@@ -1,5 +1,6 @@
 import UserDashboard from "./UserDashboard";
 import AdminDashboard from "./AdminDashboard";
+import ProviderDashboard from "./ProviderDashboard";
 import Navbar from "../components/Navbar";
 
 function Dashboard() {
@@ -14,6 +15,7 @@ function Dashboard() {
 
                 {role === "ADMIN" && <AdminDashboard />}
                 {role === "USER" && <UserDashboard />}
+                {role === "PROVIDER" && <ProviderDashboard />}
 
             </div>
         </>

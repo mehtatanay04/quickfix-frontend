@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Login(){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -13,7 +13,7 @@ function Login() {
         if (token) {
             navigate("/dashboard");
         }
-    }, [navigate]);
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,7 +29,7 @@ function Login() {
 
             navigate("/dashboard");
 
-        } catch (error) {
+        } catch (error){
             localStorage.removeItem("token");
             localStorage.removeItem("role");
             alert("Login Failed");
@@ -38,6 +38,7 @@ function Login() {
 
     return (
         <div className="auth-page">
+
             <div className="auth-card">
 
                 <h2 className="auth-title">Login</h2>
@@ -47,19 +48,17 @@ function Login() {
                     <input
                         className="auth-input"
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        required
                     />
 
                     <input
                         className="auth-input"
                         type="password"
-                        placeholder="Enter your password"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required
                     />
 
                     <button className="auth-button" type="submit">
@@ -69,6 +68,7 @@ function Login() {
                 </form>
 
             </div>
+
         </div>
     );
 }

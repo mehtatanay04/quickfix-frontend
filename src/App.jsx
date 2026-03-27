@@ -3,19 +3,21 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProviderLogin from "./pages/ProviderLogin";
+import ProviderRegister from "./pages/ProviderRegister";
 import Dashboard from "./pages/Dashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 
 function App() {
-
   return (
     <Routes>
 
-      {/* Landing */}
+      {/* HOME */}
       <Route path="/" element={<Home />} />
 
-      {/* Public (only when NOT logged in) */}
+      {/* USER AUTH */}
       <Route
         path="/login"
         element={
@@ -34,7 +36,26 @@ function App() {
         }
       />
 
-      {/* Protected */}
+      {/* PROVIDER AUTH */}
+      <Route
+        path="/provider-login"
+        element={
+          <PublicRoute>
+            <ProviderLogin />
+          </PublicRoute>
+        }
+      />
+
+      <Route
+        path="/provider-register"
+        element={
+          <PublicRoute>
+            <ProviderRegister />
+          </PublicRoute>
+        }
+      />
+
+      {/* DASHBOARD */}
       <Route
         path="/dashboard"
         element={

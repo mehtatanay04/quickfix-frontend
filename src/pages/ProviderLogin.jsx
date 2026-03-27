@@ -2,28 +2,29 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Register(){
+function ProviderLogin(){
 
     const navigate = useNavigate();
 
-    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleRegister = async(e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            await axios.post(
-                "http://localhost:8081/api/auth/register",
-                { name, email, password }
+            const res = await axios.post(
+                "http://localhost:8081/api/provider/login",
+                { email, password }
             );
 
-            alert("Registration Successful!");
-            navigate("/login");
+            localStorage.setItem("token", res.data);
+            localStorage.setItem("role", "PROVIDER");
 
-        } catch (error) {
-            alert("Registration failed");
+            navigate("/provider-dashboard");
+
+        } catch (err) {
+            alert("Login failed or not approved yet");
         }
     };
 
@@ -32,23 +33,14 @@ function Register(){
 
             <div className="auth-card">
 
-                <h2 className="auth-title">Register</h2>
+                <h2 className="auth-title">Provider Login</h2>
 
-                <form className="auth-form" onSubmit={handleRegister}>
-
-                    <input
-                        className="auth-input"
-                        type="text"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
+                <form className="auth-form" onSubmit={handleLogin}>
 
                     <input
                         className="auth-input"
                         type="email"
                         placeholder="Email"
-                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
 
@@ -56,12 +48,11 @@ function Register(){
                         className="auth-input"
                         type="password"
                         placeholder="Password"
-                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
 
                     <button className="auth-button" type="submit">
-                        Register
+                        Login
                     </button>
 
                 </form>
@@ -72,4 +63,4 @@ function Register(){
     );
 }
 
-export default Register;
+export default ProviderLogin;
