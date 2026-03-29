@@ -2,180 +2,183 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function ProviderDashboard() {
+    const [jobs, setJobs] = useState([]);
+    const [earnings, setEarnings] = useState(0);
+    const [available, setAvailable] = useState(true);
+    const [activeTab, setActiveTab] = useState("jobs");
 
-const [jobs, setJobs] = useState([]);
-const [earnings, setEarnings] = useState(0);
-const [available, setAvailable] = useState(true);
+    const authHeader = {
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+    };
 
-useEffect(() => {
-fetchJobs();
-fetchEarnings();
-}, []);
+    useEffect(() => {
+        fetchJobs();
+        fetchEarnings();
+    }, []);
 
-const fetchJobs = async () => {
-try {
-const res = await axios.get(
-"http://localhost:8081/api/provider/my-jobs",
-{
-headers: {
-Authorization: "Bearer " + localStorage.getItem("token")
-}
-}
-);
+    const fetchJobs = async () => {
+        try {
+            const res = await axios.get("http://localhost:8081/api/provider/my-jobs", authHeader);
+            setJobs(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-setJobs(res.data);
+    const fetchEarnings = async () => {
+        try {
+            const res = await axios.get("http://localhost:8081/api/provider/earnings", authHeader);
+            setEarnings(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-} catch (err) {
-alert("Failed to load jobs");
-}
-};
+    const acceptJob = async (id) => {
+        try {
+            await axios.put(`http://localhost:8081/api/provider/accept-job/${id}`, {}, authHeader);
+            fetchJobs();
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-const fetchEarnings = async () => {
-try {
-const res = await axios.get(
-"http://localhost:8081/api/provider/earnings",
-{
-headers: {
-Authorization: "Bearer " + localStorage.getItem("token")
-}
-}
-);
+    const completeJob = async (id) => {
+        try {
+            await axios.put(`http://localhost:8081/api/provider/complete-job/${id}`, {}, authHeader);
+            fetchJobs();
+            fetchEarnings();
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-setEarnings(res.data);
+    const toggleAvailability = async () => {
+        try {
+            await axios.put("http://localhost:8081/api/provider/toggle-availability", {}, authHeader);
+            setAvailable(!available);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-} catch (err) {
-console.log(err);
-}
-};
+    const pendingJobs = jobs.filter(j => j.status === "PENDING");
+    const confirmedJobs = jobs.filter(j => j.status === "CONFIRMED");
+    const completedJobs = jobs.filter(j => j.status === "COMPLETED");
 
-const acceptJob = async (id) => {
-try {
-await axios.put(
-`http://localhost:8081/api/provider/accept-job/${id}`,
-{},
-{
-headers: {
-Authorization: "Bearer " + localStorage.getItem("token")
-}
-}
-);
+    return (
+        <div className="pvd-layout">
 
-fetchJobs();
+            {/* TOP STATS BAR */}
+            <div className="pvd-stats-bar">
+                <div className="pvd-stat-card pvd-earnings">
+                    <span className="pvd-stat-label">Total Earnings</span>
+                    <strong className="pvd-stat-value">₹{earnings}</strong>
+                </div>
 
-} catch (err) {
-alert("Accept failed");
-}
-};
+                <div className="pvd-stat-card">
+                    <span className="pvd-stat-label">Pending Jobs</span>
+                    <strong className="pvd-stat-value">{pendingJobs.length}</strong>
+                </div>
 
-const completeJob = async (id) => {
-try {
-await axios.put(
-`http://localhost:8081/api/provider/complete-job/${id}`,
-{},
-{
-headers: {
-Authorization: "Bearer " + localStorage.getItem("token")
-}
-}
-);
+                <div className="pvd-stat-card">
+                    <span className="pvd-stat-label">In Progress</span>
+                    <strong className="pvd-stat-value">{confirmedJobs.length}</strong>
+                </div>
 
-fetchJobs();
-fetchEarnings();
+                <div className="pvd-stat-card">
+                    <span className="pvd-stat-label">Completed</span>
+                    <strong className="pvd-stat-value">{completedJobs.length}</strong>
+                </div>
 
-} catch (err) {
-alert("Complete failed");
-}
-};
+                <div className="pvd-availability-card">
+                    <div className="pvd-avail-info">
+                        <span className="pvd-stat-label">Availability</span>
+                        <span className={`pvd-avail-status ${available ? "pvd-online" : "pvd-offline"}`}>
+                            {available ? "● Online" : "○ Offline"}
+                        </span>
+                    </div>
+                    <button className="pvd-toggle-btn" onClick={toggleAvailability}>
+                        {available ? "Go Offline" : "Go Online"}
+                    </button>
+                </div>
+            </div>
 
-const toggleAvailability = async () => {
-try {
-await axios.put(
-"http://localhost:8081/api/provider/toggle-availability",
-{},
-{
-headers: {
-Authorization: "Bearer " + localStorage.getItem("token")
-}
-}
-);
+            {/* TABS */}
+            <div className="pvd-tabs">
+                {[
+                    { id: "jobs", label: "Active Jobs", count: pendingJobs.length + confirmedJobs.length },
+                    { id: "completed", label: "Completed", count: completedJobs.length },
+                ].map(tab => (
+                    <button
+                        key={tab.id}
+                        className={`pvd-tab ${activeTab === tab.id ? "active" : ""}`}
+                        onClick={() => setActiveTab(tab.id)}
+                    >
+                        {tab.label}
+                        {tab.count > 0 && <span className="pvd-tab-count">{tab.count}</span>}
+                    </button>
+                ))}
+            </div>
 
-setAvailable(!available);
+            {/* JOB CARDS */}
+            <div className="pvd-jobs-grid">
+                {activeTab === "jobs" && (
+                    <>
+                        {pendingJobs.length === 0 && confirmedJobs.length === 0 && (
+                            <div className="pvd-empty">No active jobs right now</div>
+                        )}
 
-} catch (err) {
-alert("Failed to update availability");
-}
-};
+                        {[...pendingJobs, ...confirmedJobs].map(job => (
+                            <div key={job.id} className={`pvd-job-card pvd-job-${job.status.toLowerCase()}`}>
+                                <div className="pvd-job-top">
+                                    <div className="pvd-job-icon">🛠</div>
+                                    <span className={`status-badge status-${job.status.toLowerCase()}`}>
+                                        {job.status}
+                                    </span>
+                                </div>
+                                <h3 className="pvd-job-name">{job.service.name}</h3>
+                                {job.user && <p className="pvd-job-meta">👤 {job.user.email}</p>}
+                                {job.bookingDate && <p className="pvd-job-meta">📅 {job.bookingDate}</p>}
+                                {job.address && <p className="pvd-job-meta">📍 {job.address}</p>}
 
-return (
-<div>
+                                <div className="pvd-job-actions">
+                                    {job.status === "PENDING" && (
+                                        <button className="pvd-action-btn pvd-accept" onClick={() => acceptJob(job.id)}>
+                                            Accept Job
+                                        </button>
+                                    )}
+                                    {job.status === "CONFIRMED" && (
+                                        <button className="pvd-action-btn pvd-complete" onClick={() => completeJob(job.id)}>
+                                            Mark Complete
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                )}
 
-{/* HEADER */}
-<h2 className="section-title">Provider Dashboard</h2>
-
-{/* EARNINGS */}
-<div className="card">
-<div className="card-content">
-<span className="card-title">Total Earnings</span>
-<strong>₹ {earnings}</strong>
-</div>
-</div>
-
-{/* AVAILABILITY */}
-<div className="card">
-<div className="card-content">
-<span className="card-title">Availability</span>
-<strong>{available ? "Available" : "Not Available"}</strong>
-</div>
-
-<div className="card-actions">
-<button className="primary-btn" onClick={toggleAvailability}>
-Toggle
-</button>
-</div>
-</div>
-
-{/* JOBS */}
-<h3 className="section-title">My Jobs</h3>
-
-{jobs.length === 0 && (
-<p className="empty-message">No jobs assigned</p>
-)}
-
-{jobs.map(job => (
-<div key={job.id} className="card">
-
-<div className="card-content">
-<span className="card-title">{job.service.name}</span>
-<span>Status: {job.status}</span>
-</div>
-
-<div className="card-actions">
-
-{job.status === "PENDING" && (
-<button
-className="primary-btn"
-onClick={() => acceptJob(job.id)}
->
-Accept
-</button>
-)}
-
-{job.status === "CONFIRMED" && (
-<button
-className="primary-btn"
-onClick={() => completeJob(job.id)}
->
-Complete
-</button>
-)}
-
-</div>
-
-</div>
-))}
-
-</div>
-);
+                {activeTab === "completed" && (
+                    <>
+                        {completedJobs.length === 0 && (
+                            <div className="pvd-empty">No completed jobs yet</div>
+                        )}
+                        {completedJobs.map(job => (
+                            <div key={job.id} className="pvd-job-card pvd-job-completed">
+                                <div className="pvd-job-top">
+                                    <div className="pvd-job-icon">✓</div>
+                                    <span className="status-badge status-completed">COMPLETED</span>
+                                </div>
+                                <h3 className="pvd-job-name">{job.service.name}</h3>
+                                {job.bookingDate && <p className="pvd-job-meta">📅 {job.bookingDate}</p>}
+                            </div>
+                        ))}
+                    </>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default ProviderDashboard;
