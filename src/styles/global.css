@@ -1,4 +1,28 @@
 /* =============================================
+   GLOBAL RESET — Add at very top of global.css
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0a0a0f;
+  color: #f1f1f5;
+  overflow-x: hidden;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  background: #0a0a0f;
+}
+
+/* =============================================
    QUICKFIX HOME PAGE — Add to global.css
    ============================================= */
 

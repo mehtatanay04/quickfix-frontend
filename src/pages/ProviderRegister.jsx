@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 function ProviderRegister() {
@@ -17,8 +17,8 @@ function ProviderRegister() {
         setError("");
         setLoading(true);
         try {
-            await axios.post(
-                "http://localhost:8081/api/provider/register",
+            await axiosInstance.post(
+                "/api/provider/register",
                 form
             );
             navigate("/provider-login");

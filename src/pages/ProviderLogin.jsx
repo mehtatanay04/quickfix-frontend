@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 function ProviderLogin() {
@@ -14,8 +14,8 @@ function ProviderLogin() {
         setError("");
         setLoading(true);
         try {
-            const res = await axios.post(
-                "http://localhost:8081/api/provider/login",
+            const res = await axiosInstance.post(
+                "/api/provider/login",
                 { email, password }
             );
             localStorage.setItem("token", res.data);

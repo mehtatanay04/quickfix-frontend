@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 function AdminDashboard() {
     const [bookings, setBookings] = useState([]);
@@ -20,31 +20,31 @@ function AdminDashboard() {
     }, []);
 
     const fetchAllBookings = async () => {
-        const res = await axios.get("http://localhost:8081/api/admin/bookings", authHeader);
+        const res = await axiosInstance.get("/api/admin/bookings", authHeader);
         setBookings(res.data);
     };
     const fetchProviders = async () => {
-        const res = await axios.get("http://localhost:8081/api/admin/providers", authHeader);
+        const res = await axiosInstance.get("/api/admin/providers", authHeader);
         setProviders(res.data);
     };
     const fetchServices = async () => {
-        const res = await axios.get("http://localhost:8081/api/user/services", authHeader);
+        const res = await axiosInstance.get("/api/user/services", authHeader);
         setServices(res.data);
     };
 
     const updateStatus = async (bookingId, newStatus) => {
-        await axios.put(`http://localhost:8081/api/admin/booking/${bookingId}/status`, { status: newStatus }, authHeader);
+        await axiosInstance.put(`/api/admin/booking/${bookingId}/status`, { status: newStatus }, authHeader);
         fetchAllBookings();
     };
 
     const assignProvider = async (bookingId, providerId) => {
         if (!providerId) return;
-        await axios.put(`http://localhost:8081/api/admin/booking/${bookingId}/assign-provider`, { providerId: Number(providerId) }, authHeader);
+        await axiosInstance.put(`/api/admin/booking/${bookingId}/assign-provider`, { providerId: Number(providerId) }, authHeader);
         fetchAllBookings();
     };
 
     const approveProvider = async (providerId) => {
-        await axios.put(`http://localhost:8081/api/admin/provider/${providerId}/approve`, {}, authHeader);
+        await axiosInstance.put(`/api/admin/provider/${providerId}/approve`, {}, authHeader);
         fetchProviders();
     };
 
@@ -52,7 +52,7 @@ function AdminDashboard() {
         if (!newService.name || !newService.price) return;
         setAddingService(true);
         try {
-            await axios.post("http://localhost:8081/api/admin/add-service", newService, authHeader);
+            await axiosInstance.post("/api/admin/add-service", newService, authHeader);
             setNewService({ name: "", description: "", price: "" });
             fetchServices();
         } finally {

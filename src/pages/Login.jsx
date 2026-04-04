@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -19,8 +19,8 @@ function Login() {
         setError("");
         setLoading(true);
         try {
-            const response = await axios.post(
-                "http://localhost:8081/api/auth/login",
+            const response = await axiosInstance.post(
+                "/api/auth/login",
                 { email, password }
             );
             localStorage.setItem("token", response.data.token);

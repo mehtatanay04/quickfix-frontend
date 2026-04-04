@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 function ProviderDashboard() {
     const [jobs, setJobs] = useState([]);
@@ -18,7 +18,7 @@ function ProviderDashboard() {
 
     const fetchJobs = async () => {
         try {
-            const res = await axios.get("http://localhost:8081/api/provider/my-jobs", authHeader);
+            const res = await axiosInstance.get("/api/provider/my-jobs", authHeader);
             setJobs(res.data);
         } catch (err) {
             console.error(err);
@@ -27,7 +27,7 @@ function ProviderDashboard() {
 
     const fetchEarnings = async () => {
         try {
-            const res = await axios.get("http://localhost:8081/api/provider/earnings", authHeader);
+            const res = await axiosInstance.get("/api/provider/earnings", authHeader);
             setEarnings(res.data);
         } catch (err) {
             console.error(err);
@@ -36,7 +36,7 @@ function ProviderDashboard() {
 
     const acceptJob = async (id) => {
         try {
-            await axios.put(`http://localhost:8081/api/provider/accept-job/${id}`, {}, authHeader);
+            await axiosInstance.put(`/api/provider/accept-job/${id}`, {}, authHeader);
             fetchJobs();
         } catch (err) {
             console.error(err);
@@ -45,7 +45,7 @@ function ProviderDashboard() {
 
     const completeJob = async (id) => {
         try {
-            await axios.put(`http://localhost:8081/api/provider/complete-job/${id}`, {}, authHeader);
+            await axiosInstance.put(`/api/provider/complete-job/${id}`, {}, authHeader);
             fetchJobs();
             fetchEarnings();
         } catch (err) {
@@ -55,7 +55,7 @@ function ProviderDashboard() {
 
     const toggleAvailability = async () => {
         try {
-            await axios.put("http://localhost:8081/api/provider/toggle-availability", {}, authHeader);
+            await axiosInstance.put("/api/provider/toggle-availability", {}, authHeader);
             setAvailable(!available);
         } catch (err) {
             console.error(err);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 
 function ServiceList({ onBooked }) {
 
@@ -19,8 +19,8 @@ fetchServices();
 
 const fetchServices = async () => {
 try {
-const response = await axios.get(
-"http://localhost:8081/api/user/services",
+const response = await axiosInstance.get(
+"/api/user/services",
 {
 headers: {
 Authorization: "Bearer " + localStorage.getItem("token")
@@ -52,8 +52,8 @@ setBookingData({
 
 const bookService = async () => {
 try {
-await axios.post(
-"http://localhost:8081/api/user/book",
+await axiosInstance.post(
+"/api/user/book",
 {
 serviceId: selectedService.id,
 ...bookingData

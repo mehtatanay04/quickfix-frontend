@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../services/axiosInstance";
 import ServiceList from "../components/ServiceList";
 
 function UserDashboard() {
@@ -12,8 +12,8 @@ function UserDashboard() {
 
     const fetchMyBookings = async () => {
         try {
-            const response = await axios.get(
-                "http://localhost:8081/api/user/my-bookings",
+            const response = await axiosInstance.get(
+                "/api/user/my-bookings",
                 { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
             );
             setBookings(response.data);
@@ -24,8 +24,8 @@ function UserDashboard() {
 
     const cancelBooking = async (bookingId) => {
         try {
-            await axios.put(
-                `http://localhost:8081/api/user/cancel/${bookingId}`,
+            await axiosInstance.put(
+                `/api/user/cancel/${bookingId}`,
                 {},
                 { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
             );
